@@ -1,2 +1,2 @@
 # jogoteca
-aprendendo Flask
+Learning Flask
