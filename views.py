@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, session, flash, url_for
+from flask import render_template, request, redirect, session, flash, url_for, send_from_directory
 from models import Jogos, Usuarios
 from jogoteca import app, db
 
@@ -16,6 +16,11 @@ def novo():
     return render_template("novo.html", titulo="Novo Jogo")
 
 
+@app.route('/uplodas/<nome_arquivo>')
+def imagem(nome_arquivo):
+    return send_from_directory('uploads', nome_arquivo)
+
+
 @app.route("/criar", methods=["POST"])
 def criar():
     nome = request.form["nome"]
@@ -31,6 +36,10 @@ def criar():
     novo_jogo = Jogos(nome=nome, categoria=categoria, console=console)
     db.session.add(novo_jogo)
     db.session.commit()
+
+    arquivo = request.files['arquivo']
+    upload_path = app.config['UPLOAD_PATH']
+    arquivo.save(f'{upload_path}/capa{novo_jogo.id}.jpg')
 
     return redirect(url_for("index"))
 
