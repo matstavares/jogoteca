@@ -46,9 +46,10 @@ def criar():
     db.session.commit()
 
     arquivo = request.files['arquivo']
-    upload_path = app.config['UPLOAD_PATH']
-    timestamp = time.time()
-    arquivo.save(f'{upload_path}/capa{novo_jogo.id}-{timestamp}.jpg')
+    if arquivo:
+        upload_path = app.config['UPLOAD_PATH']
+        timestamp = time.time()
+        arquivo.save(f'{upload_path}/capa{novo_jogo.id}-{timestamp}.jpg')
 
     return redirect(url_for("index"))
 
@@ -103,6 +104,7 @@ def excluir(id):
     jogo = Jogos.query.filter_by(id=id).first()
     Jogos.query.filter_by(id=id).delete()
     db.session.commit()
+    deleta_arquivo(jogo.id)
     flash("Jogo " + jogo.nome + " excluído com sucesso!")
 
     return redirect(url_for('index'))
